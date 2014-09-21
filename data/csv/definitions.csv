@@ -1,0 +1,164 @@
+short,long,revised
+RECNUM,Record Number,record_number
+HOSPREGN,Hospital Registration Number,hosp_number
+Q1,Health Centre,health_centre
+Q2,Age (in years),age
+Q3,Health Insurance status,health_insurance_status
+Q4,Education,education
+Q5,Marital Status,marital_status
+Q5B,Occupation,occupation
+Q6,Parity - number of children had by mother,parity
+Q7,Number of people living in household,household_size
+Q8,Do you work?,works
+Q9,Main occupation,occupation_main
+Q9SPECIF,Specified main occupation,occupation_main_specific
+Q10,Average monthly income (in GHC),monthly_income
+Q11,Religious affiliation,religion
+Q12,Clinic/hospital visited for medical care,hospital_visited
+Q13,Number of times visited clinic/hospital about pregnancy,num_hospital_visits
+Q14,Have you ever been told you have a a disease(s) after you got pregnant?,whether_diseased
+Q15,"If yes, what disease?",whether_diseased_what
+Q16,Your health status in this pregnancy,health_status
+Q171,Do you have any of these?,whether_diseased_this_1
+Q172,Do you have any of these?,whether_diseased_this_2
+Q173,Do you have any of these?,whether_diseased_this_3
+Q174,Do you have any of these?,whether_diseased_this_4
+Q175,Others specified,whether_diseased_other
+Q18,I believe I cannot control my own health,belief_cannot_control_health
+Q19,The things I do and eat may affect my pregnancy,belief_things_do_affect_pregnancy
+Q201,Are you interested in information on the following?,information_interest_1
+Q202,Are you interested in information on the following?,information_interest_2
+Q203,Are you interested in information on the following?,information_interest_3
+Q204,Are you interested in information on the following?,information_interest_4
+Q211,Which is true about all your deliveries?,true_about_deliveries_1
+Q212,Which is true about all your deliveries?,true_about_deliveries_2
+Q213,Which is true about all your deliveries?,true_about_deliveries_3
+Q214,Did you have labour or delivery complication?,delivery_complications
+Q214SP,Specified facts about your deliveries,delivery_facts
+Q22,You do exercise,behaviours_exercise
+Q23,You eat more fruits/vegetables (vitamins/minerals),behaviours_fruit_veg
+Q24,You eat less fatty/fried/sugary foods,behaviours_less_bad_food
+Q25,You eat less salt,behaviours_less_salt
+Q26,"You eat meat/fish/egg, dairy products, beans (Proteins & irons)",behaviours_eat_protein
+Q27,"Bread, kenkey, yam, rice (Carbohydrates)",behaviours_eat_carbs
+Q28,Blood pressure controls,behaviours_lower_blood_pressure
+Q29,Diabetes control,behaviours_control_diabetes
+Q30,Decrease alcohol/tobacco use,behaviours_smoke_less
+Q31,Seen nurse/doctor within the last 12 months,seen_nurse_last_year
+Q32,Are you breastfeeding?,breastfeeding
+Q33,"If breastfeeding, how many times each day?",breastfeeding_how_often
+Q34,How many meals do you eat most days?,breastfeeding_meals_per_day
+Q35,Do you take ante-natal multi-vitamins and irons?,ante_natal_vitamins
+Q36,"At the time you became pregnant, did you want to become pregnant them?",pregnancy_wanted
+Q36B,"If No, why was the pregnancy not prevented?",pregnancy_wanted_why
+Q37,Do you see family planning as important?,family_planning_important
+Q37YES,"If Yes, why?",family_planning_important_yes_why
+Q37NO,"If No, why?",family_planning_important_no_why
+Q381,Which family planning method have you heard about?,family_planning_method_1
+Q382,Which family planning method have you heard about?,family_planning_method_2
+Q383,Which family planning method have you heard about?,family_planning_method_3
+Q384,Which family planning method have you heard about?,family_planning_method_4
+Q385,Which family planning method have you heard about?,family_planning_method_5
+Q386,Which family planning method have you heard about?,family_planning_method_6
+Q387,Which family planning method have you heard about?,family_planning_method_7
+Q388,Which family planning method have you heard about?,family_planning_method_8
+Q389,Which family planning method have you heard about?,family_planning_method_9
+Q3810,Which family planning method have you heard about?,family_planning_method_10
+Q3811,Which family planning method have you heard about?,family_planning_method_11
+Q3812,Which family planning method have you heard about?,family_planning_method_12
+Q3813,Which family planning method have you heard about?,family_planning_method_13
+Q3814,Which family planning method have you heard about?,family_planning_method_14
+Q39,Have you ever used any of the above contraceptives to delay or avoid getting pregnant?,used_contraceptives
+Q391,"If yes, which method?",used_contraceptives_method_1
+Q392,"If yes, which method?",used_contraceptives_method_2
+Q393,"If yes, which method?",used_contraceptives_method_3
+Q394,"If yes, which method?",used_contraceptives_method_4
+Q395,"If yes, which method?",used_contraceptives_method_5
+Q396,"If yes, which method?",used_contraceptives_method_6
+Q397,"If yes, which method?",used_contraceptives_method_7
+Q398,"If yes, which method?",used_contraceptives_method_8
+Q399,"If yes, which method?",used_contraceptives_method_9
+Q3910,"If yes, which method?",used_contraceptives_method_10
+Q3911,"If yes, which method?",used_contraceptives_method_11
+Q3912,"If yes, which method?",used_contraceptives_method_12
+Q3913,"If yes, which method?",used_contraceptives_method_13
+Q3914,"If yes, which method?",used_contraceptives_method_14
+Q40,"The first time you used this method, did it help you?",contraceptives_helped
+Q41,Do you go for family planning services in this district?,family_planning
+Q41IFYES,"If Yes, where?",family_planning_where
+Q42,Have you ever had any sex education in your life?,sex_education
+Q42IFYES,"If Yes, when?",sex_education_when
+Q43,Who do you think should be responsible for taking family planning decisions?,family_planning_who_responsible
+Q43WHO,Specify who,family_planning_who_responsible_specific
+Q44,Does your current centre charge for services they give?,family_planning_charges
+Q44IFYES,"If Yes, is it expensive?",family_planning_charges_expensive
+DATE1,Date of antenatal visit,visit_1_date
+WT1,Weight (in kg),visit_1_weight
+BP1S,BP - Num (mmHg),visit_1_bp_num
+BP1D,BP - Denom (mmHg),visit_1_bp_denom
+UPROTEIN,Urine (Protein),visit_1_urine_protein
+USUGAR1,Urine (Sugar),visit_1_urine_sugar
+GESTAGE1,Gestation age (in weeks),visit_1_gestation
+DATE2,Date of antenatal visit,visit_2_date
+WT2,Weight (in kg),visit_2_weight
+BP2S,BP - Num (mmHg),visit_2_bp_num
+BP2D,BP - Denom (mmHg),visit_2_bp_denom
+UPROTEI1,Urine (Protein),visit_2_urine_protein
+USUGAR2,Urine (Sugar),visit_2_urine_sugar
+GESTAGE2,Gestation age (in weeks),visit_2_gestation
+DATE3,Date of antenatal visit,visit_3_date
+WT3,Weight (in kg),visit_3_weight
+BP3S,BP - Num (mmHg),visit_3_bp_num
+BP3D,BP - Denom (mmHg),visit_3_bp_denom
+UPROTEI2,Urine (Protein),visit_3_urine_protein
+USUGAR3,Urine (Sugar),visit_3_urine_sugar
+GESTAGE3,Gestation age (in weeks),visit_3_gestation
+DATE4,Date of antenatal visit,visit_4_date
+WT4,Weight (in kg),visit_4_weight
+BP4S,BP - Num (mmHg),visit_4_bp_num
+BP4D,BP - Denom (mmHg),visit_4_bp_denom
+UPROTEI3,Urine (Protein),visit_4_urine_protein
+USUGAR4,Urine (Sugar),visit_4_urine_sugar
+GESTAGE4,Gestation age (in weeks),visit_4_gestation
+DATE5,Date of antenatal visit,visit_5_date
+WT5,Weight (in kg),visit_5_weight
+BP5S,BP - Num (mmHg),visit_5_bp_num
+BP5D,BP - Denom (mmHg),visit_5_bp_denom
+UPROTEI4,Urine (Protein),visit_5_urine_protein
+USUGAR5,Urine (Sugar),visit_5_urine_sugar
+GESTAGE5,Gestation age (in weeks),visit_5_gestation
+DATE6,Date of antenatal visit,visit_6_date
+WT6,Weight (in kg),visit_6_weight
+BP6S,BP - Num (mmHg),visit_6_bp_num
+BP6D,BP - Denom (mmHg),visit_6_bp_denom
+UPROTEI5,Urine (Protein),visit_6_urine_protein
+USUGAR6,Urine (Sugar),visit_6_urine_sugar
+GESTAGE6,Gestation age (in weeks),visit_6_gestation
+DATE7,Date of antenatal visit,visit_7_date
+WT7,Weight (in kg),visit_7_weight
+BP7S,BP - Num (mmHg),visit_7_bp_num
+BP7D,BP - Denom (mmHg),visit_7_bp_denom
+UPROTEI6,Urine (Protein),visit_7_urine_protein
+USUGAR7,Urine (Sugar),visit_7_urine_sugar
+GESTAGE7,Gestation age (in weeks),visit_7_gestation
+DATE8,Date of antenatal visit,visit_8_date
+WT8,Weight (in kg),visit_8_weight
+BP8S,BP - Num (mmHg),visit_8_bp_num
+BP8D,BP - Denom (mmHg),visit_8_bp_denom
+UPROTEI7,Urine (Protein),visit_8_urine_protein
+USUGAR8,Urine (Sugar),visit_8_urine_sugar
+GESTAGE8,Gestation age (in weeks),visit_8_gestation
+GeometricGestAge,Gestation age (in weeks),geometric_gest_age
+BABYWT,Weight of baby,baby_birth_weight
+BABYSEX,Sex of baby,baby_sex
+GESTAB,Gestation at birth,baby_birth_gestation
+GestAtBirth,Gestation at birth,baby_birth_gestation_2
+GestAtBirthRec,Gestation status,baby_birth_gestation_status
+BPSAtBirth,,baby_birth_bps
+BPDAtBirth,,baby_birth_bpd
+WTAtBirth,,baby_birth_wta
+HB,Hb,baby_hb
+HBrec,HB of mother,mother_hb
+HT,Height,height
+BPRatio,,bp_ratio
+BMI,,bmi
