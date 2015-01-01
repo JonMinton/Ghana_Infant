@@ -14,8 +14,8 @@ RequiredPackages(
   )
 
 
-# require("scripts/load_data_first_time.r")
-# require("scripts/split_dataset.r")
+source("scripts/load_data_first_time.r")
+source("scripts/split_dataset.r")
 
 #####
 
@@ -23,89 +23,75 @@ data_main <- read.csv("data/csv/data_main.csv")
 data_visits <- read.csv("data/csv/data_visits.csv")
 data_birth_details <- read.csv("data/csv/data_birth_details.csv")
 
-# Some descriptive statistics
+
+# Redoing with new values pasted over 
+
 
 qplot(bmi, height, data=data_main)
-# suggests thare are some coding errors regarding height; a number of observations over 5m tall
-data_main_height_error <- subset(data_main, height > 2)
-data_main_bmi_error <- subset(data_main, bmi > 100)
 
-data_birth_details_error1 <- subset(data_birth_details,
-                                baby_birth_wta <= 7 | baby_birth_wta >= 250
-                                )
-data_birth_details_error2 <- subset(data_birth_details,
-                                   baby_birth_weight >= 5.5
-                                  )
-
-qplot(bp_ratio, data=data_main)
-# also suggests one or two coding errors
-
-qplot(baby_birth_weight, data=subset(data_birth_details, subset=!is.na(baby_sex)), 
-      geom="histogram", binwidth=.2) -> p
-
-p + facet_grid(. ~ baby_sex) + geom_vline(x=5.5)
-
-data_baby_birth_weight_error <- subset(data_birth_details, baby_birth_weight > 5.5)
-
-# ACTION: ASK FOR DEFINITION OF AGE LABELS
+# Suggests just one possible error now, a height under 1.3
 
 
-# collate record numbers assumed to be errors 
-
-error_records <- c(
-  data_main_height_error$record_number,
-  data_main_bmi_error$record_number,
-  data_birth_details_error1$record_number,
-  data_birth_details_error2$record_number,
-  data_baby_birth_weight_error$record_number
+error_df <- data.frame(
+  record_number=subset(data_main, height < 1.3)$record_number,
+  reason="outlier: low height"
   )
-error_records <- sort(unique(error_records))
-
-# look at the data without the errorenous errors 
-
-data_main_e <- subset(data_main, subset=!(record_number %in% error_records))
-data_visits_e <- subset(data_visits, subset=!(record_number %in% error_records))
-data_birth_details_e <- subset(data_birth_details, subset=!(record_number %in% error_records))
-
-# visualise the new subsets without errors
-
-qplot(bmi, height, data=data_main_e)
-# Additional possible errors: bmi < 10
-
-(error_low_bmi <- subset(data_main_e, subset=bmi < 10)$record_number)
-error_records <- c(error_records, error_low_bmi)
-error_records <- sort(unique(error_records))
-
-# iterate again
-
-data_main_e <- subset(data_main, subset=!(record_number %in% error_records))
-data_visits_e <- subset(data_visits, subset=!(record_number %in% error_records))
-data_birth_details_e <- subset(data_birth_details, subset=!(record_number %in% error_records))
 
 
-qplot(bmi, height, data=data_main_e)
-# some people with low height that's not part of the usual distribution, this this
-# could be plausible
 
-(very_low_height <- subset(data_main_e, subset = height < 1.25)$record_number)
+qplot(bp_ratio, data=data_main, binwidth=0.1) + geom_vline(aes(xintercept=c(0.32, 2.75)))
 
-# 
-(qplot(baby_birth_weight, data=subset(data_birth_details_e, subset=!is.na(baby_sex)), 
-      geom="histogram") -> p)
+error_df <- rbind(
+  error_df,
+  data.frame(
+    record_number=subset(data_main, bp_ratio < 0.32)$record_number,
+    reason="bp ratio almost 0"
+    ),
+  data.frame(
+    record_number=subset(data_main, bp_ratio>2.75)$record_number,
+    reason="bp ratio over 2.75"
+    )
+  )
 
-p + facet_grid(. ~ baby_sex) + geom_vline(x=5.5)
-# no definite big outliers here
 
-head(arrange(data_birth_details_e, baby_birth_weight))
+# Very high weights:
+qplot(weight, data=data_visits, binwidth=0.2) + geom_vline(aes(xintercept=c(30, 170)))
+
+error_df <- rbind(
+  error_df,
+  data.frame(
+    record_number=subset(data_visits, weight < 30)$record_number,
+    reason="weight below 30"
+    ),
+  data.frame(
+    record_number=subset(data_visits, weight > 170)$record_number,
+    reason="weight above 170"
+    )
+  )
+
 
 
 ## now to look at the visits data
 
-head(data_visits_e)
+head(data_visits)
+
+qplot(y=weight, x=gestation, data=data_visits) + geom_vline(aes(xintercept=c(50))) + 
+  geom_hline(aes(yintercept=c(20,170)))
+
+
+error_df <- rbind(
+  error_df,
+  data.frame(
+    record_number=subset(data_visits, gestation > 50)$record_number,
+    reason="gestation over 50"
+  )
+)
+
+
 
 # now to try lubridate
 
-dates_of_interest <- data_visits_e$date
+dates_of_interest <- data_visits$date
 
 # need to change months into values 
 
@@ -128,12 +114,11 @@ dates_of_interest <- replace_runner(
 # now to use lubridate, specifying day, month, year format
 
 dates_of_interest <- dmy(dates_of_interest)
-data_visits_e$date <- dates_of_interest
+data_visits$date <- dates_of_interest
 
 # can now calculate difference in number of days and so on. 
 
 # want to calculate dates since first visit
-
 
 fn <- function(x){
   require(lubridate)
@@ -150,8 +135,29 @@ fn <- function(x){
   return(out)
 }
 
-data_visits_e <- ddply(data_visits_e, .(record_number), fn)
+data_visits <- ddply(data_visits, .(record_number), fn)
 
+qplot(
+  x=days_since_first_visit,
+  y=weight, 
+  group=record_number,
+  colour=record_number,
+  data=data_visits,
+  geom="line"
+  )
+
+qplot(
+  x=days_since_first_visit,
+  y=weight, 
+  data=data_visits
+)
+
+write.csv(
+  data_visits,
+  file="data/data_visits_with_days_since_first_visit.csv",
+  row.names=F
+  )
+# Save it for use 
 # we can now use this to look at change in weight since first visit
 
 qplot(x=days_since_first_visit, y=weight, data=data_visits_e, group=record_number, geom="line")
