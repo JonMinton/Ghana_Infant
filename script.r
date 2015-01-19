@@ -141,7 +141,6 @@ qplot(
   x=days_since_first_visit,
   y=weight, 
   group=record_number,
-  colour=record_number,
   data=data_visits,
   geom="line"
   )
@@ -157,78 +156,7 @@ write.csv(
   file="data/data_visits_with_days_since_first_visit.csv",
   row.names=F
   )
+
+
+
 # Save it for use 
-# we can now use this to look at change in weight since first visit
-
-qplot(x=days_since_first_visit, y=weight, data=data_visits_e, group=record_number, geom="line")
-
-# some babies have a very high reported weight
-
-error_baby_weight <- subset(data_visits_e, subset=weight > 200)$record_number
-
-# iterate again: remove these observations 
-error_records <- c(error_records, error_baby_weight)
-error_records <- sort(unique(error_records))
-
-data_main_e <- subset(data_main, subset=!(record_number %in% error_records))
-data_visits_e <- subset(data_visits, subset=!(record_number %in% error_records))
-data_birth_details_e <- subset(data_birth_details, subset=!(record_number %in% error_records))
-
-
-qplot(x=days_since_first_visit, y=weight, data=data_visits_e, group=record_number, geom="line")
-
-
-
-# need to change months into values 
-
-
-replace_runner <- function(target, pattern, replace){  
-  n <- length(pattern)
-  for (i in 1:n){
-    target <- str_replace_all(target, pattern=pattern[i], replace=replace[i])
-  }  
-  return(target)
-}
-
-dates_of_interest <- replace_runner(
-  dates_of_interest,
-  pattern=c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
-  replace=c("01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12")
-)
-
-
-# now to use lubridate, specifying day, month, year format
-
-dates_of_interest <- dmy(dates_of_interest)
-data_visits_e$date <- dates_of_interest
-
-# can now calculate difference in number of days and so on. 
-
-# want to calculate dates since first visit
-
-
-fn <- function(x){
-  require(lubridate)
-  
-  t0 <- x$date[x$visit_number==1]
-  dates <- x$date
-  n <- length(dates)
-  days_since_first_visit <- rep(NA, n)
-  for (i in 1:n){ 
-    tmp <- new_interval(t0, dates[i]) 
-    days_since_first_visit[i] <- tmp / ddays(1)
-  }
-  out <- data.frame(x, days_since_first_visit=days_since_first_visit)
-  return(out)
-}
-
-data_visits_e <- ddply(data_visits_e, .(record_number), fn)
-
-# we can now use this to look at change in weight since first visit
-
-qplot(x=days_since_first_visit, y=weight, data=data_visits_e, group=record_number, geom="line")
-
-
-# there are still a range of errors with the dates: save as csv file and send back to Tony
-
-write.csv(data_visits_e, "data/csv/visit_date_data_to_recheck.csv")
