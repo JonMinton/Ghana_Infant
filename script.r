@@ -16,13 +16,59 @@ require(car)
 
 #####
 
-data_main <- read.csv("data/csv/data_main.csv")
-data_visits <- read.csv("data/csv/data_visits.csv")
-data_birth_details <- read.csv("data/csv/data_birth_details.csv")
+data_main <- read.csv("data/csv/data_main.csv") %>% tbl_df()
+data_visits <- read.csv("data/csv/data_visits.csv") %>% tbl_df()
+data_birth_details <- read.csv("data/csv/data_birth_details.csv") %>% tbl_df()
 
 
-# Redoing with new values pasted over 
+###
 
+# Start with data_main
+
+summary(data_main)
+
+# The following should be converted to factors
+
+tmp <- c(
+  "health_centre",
+  "health_status",
+  "health_insurance_status",
+  "parity",
+  "works",
+  "occupation_main",
+  "religion",
+  "belief_cannot_control_health",
+  "belief_things_do_affect_pregnancy",
+  "behaviours_exercise",
+  "behaviours_fruit_veg",
+  "behaviours_less_bad_food",
+  "behaviours_less_salt",
+  "behaviours_eat_protein",
+  "behaviours_eat_carbs",
+  "behaviours_lower_blood_pressure",
+  "behaviours_control_diabetes",
+  "behaviours_smoke_less",
+  "seen_nurse_last_year",
+  "breastfeeding",
+  "ante_natal_vitamins",
+  "pregnancy_wanted",
+  "delivery_complications",
+  "family_planning_important",
+  "used_contraceptives",
+  "family_planning",
+  "family_planning_who_responsible",
+  "family_planning_charges",
+  "family_planning_charges_expensive"
+  )
+
+for (i in 1:length(tmp)){
+  data_main[[tmp[i]]] <- as.factor(data_main[[tmp[i]]])
+}
+rm(tmp)
+
+
+
+###
 
 qplot(bmi, height, data=data_main)
 
@@ -52,7 +98,7 @@ error_df <- rbind(
 
 
 # Very high weights:
-qplot(weight, data=data_visits, binwidth=0.2) + geom_vline(aes(xintercept=c(30, 170)), linetype="dashed")
+qplot(weight, data=data_visits, binwidth=0.2) + geom_vline(aes(xintercept=c(30, 250)), linetype="dashed")
 
 error_df <- rbind(
   error_df,
@@ -61,8 +107,8 @@ error_df <- rbind(
     reason="weight below 30"
     ),
   data.frame(
-    record_number=subset(data_visits, weight > 170)$record_number,
-    reason="weight above 170"
+    record_number=subset(data_visits, weight > 250)$record_number,
+    reason="weight above 250"
     )
   )
 
@@ -70,10 +116,10 @@ error_df <- rbind(
 
 ## now to look at the visits data
 
-head(data_visits)
+data_visits
 
 qplot(y=weight, x=gestation, data=data_visits) + geom_vline(aes(xintercept=c(50)), linetype="dashed") + 
-  geom_hline(aes(yintercept=c(20,170)), linetype="dashed")
+  geom_hline(aes(yintercept=c(30,250)), linetype="dashed")
 
 
 error_df <- rbind(
@@ -118,8 +164,6 @@ data_visits$date <- dates_of_interest
 # want to calculate dates since first visit
 
 fn <- function(x){
-
-
   t0 <- x$date[x$visit_number==1]
   dates <- x$date
   n <- length(dates)
@@ -142,10 +186,12 @@ data_visits <- ddply(data_visits, .(record_number), fn)
 
 data_visits <- data_visits %>% tbl_df()
 
-data_visits <- data_visits %>% 
+data_visits_ok <- data_visits %>% 
   filter(!is.na(date)) %>%
   filter(days_since_first_visit >= 0) %>% 
-  filter(days_since_first_visit < quantile(data_visits$days_since_first_visit, 0.99, na.rm=T))
+  filter(days_since_first_visit < quantile(data_visits$days_since_first_visit, 0.99, na.rm=T)) %>%
+  filter(weight > 30 & weight < 250) %>%
+  filter(gestation < 50)
 
 
 qplot(
@@ -153,23 +199,26 @@ qplot(
   y=days_since_first_visit, 
   group=record_number,
   colour=record_number,
-  data=data_visits,
+  data=data_visits_ok,
   geom="line"
   )
 
 qplot(
   x=days_since_first_visit,
   y=weight, 
-  data=data_visits
-) + geom_hline(mapping=aes(yintercept=250), linetype="dashed")
+  data=data_visits_ok
+) + geom_hline(mapping=aes(yintercept=c(30,250)), linetype="dashed")
 
 
 write.csv(
-  data_visits,
-  file="data/data_visits_with_days_since_first_visit.csv",
+  data_visits_ok,
+  file="data/data_visits_with_days_since_first_visit_ok_only.csv",
   row.names=F
   )
 
+tmp <- data_visits_ok %>% select(record_number) %>% unique() %>% sample_n(25) %>% unlist() %>% as.numeric()
 
+data_visits_ok %>% filter(record_number %in% tmp) %>% ggplot() +
+  geom_line(aes(x=visit_number, y=weight)) +
+  facet_wrap( ~ record_number)
 
-# Save it for use 
