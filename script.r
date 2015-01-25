@@ -1,21 +1,18 @@
 rm(list=ls())
 
-source("scripts/LoadPackages.R")
+#source("scripts/LoadPackages.R")
 
-RequiredPackages(
-  c(
-  "ggplot2",
-  "reshape2",
-  "plyr",
-  "car",
-  "stringr",
-  "lubridate"
-    )
-  )
+require(ggplot2)
+require(lubridate)
+require(stringr)
+require(plyr)
+require(dplyr)
+require(tidyr)
+require(car)
 
 
-source("scripts/load_data_first_time.r")
-source("scripts/split_dataset.r")
+#source("scripts/load_data_first_time.r")
+#source("scripts/split_dataset.r")
 
 #####
 
@@ -39,7 +36,7 @@ error_df <- data.frame(
 
 
 
-qplot(bp_ratio, data=data_main, binwidth=0.1) + geom_vline(aes(xintercept=c(0.32, 2.75)))
+qplot(bp_ratio, data=data_main, binwidth=0.1) + geom_vline(aes(xintercept=c(0.32, 2.75)), linetype="dashed")
 
 error_df <- rbind(
   error_df,
@@ -55,7 +52,7 @@ error_df <- rbind(
 
 
 # Very high weights:
-qplot(weight, data=data_visits, binwidth=0.2) + geom_vline(aes(xintercept=c(30, 170)))
+qplot(weight, data=data_visits, binwidth=0.2) + geom_vline(aes(xintercept=c(30, 170)), linetype="dashed")
 
 error_df <- rbind(
   error_df,
@@ -75,8 +72,8 @@ error_df <- rbind(
 
 head(data_visits)
 
-qplot(y=weight, x=gestation, data=data_visits) + geom_vline(aes(xintercept=c(50))) + 
-  geom_hline(aes(yintercept=c(20,170)))
+qplot(y=weight, x=gestation, data=data_visits) + geom_vline(aes(xintercept=c(50)), linetype="dashed") + 
+  geom_hline(aes(yintercept=c(20,170)), linetype="dashed")
 
 
 error_df <- rbind(
@@ -121,7 +118,7 @@ data_visits$date <- dates_of_interest
 # want to calculate dates since first visit
 
 fn <- function(x){
-  require(lubridate)
+
 
   t0 <- x$date[x$visit_number==1]
   dates <- x$date
@@ -135,12 +132,27 @@ fn <- function(x){
   return(out)
 }
 
+
 data_visits <- ddply(data_visits, .(record_number), fn)
 
+# process
+# 1) remove NA entries to visit number
+# 2) remove negative days_since_first_visit
+# 3) remove positive days_since_first_visit greater than top 1% of values
+
+data_visits <- data_visits %>% tbl_df()
+
+data_visits <- data_visits %>% 
+  filter(!is.na(date)) %>%
+  filter(days_since_first_visit >= 0) %>% 
+  filter(days_since_first_visit < quantile(data_visits$days_since_first_visit, 0.99, na.rm=T))
+
+
 qplot(
-  x=days_since_first_visit,
-  y=weight, 
+  x=visit_number,
+  y=days_since_first_visit, 
   group=record_number,
+  colour=record_number,
   data=data_visits,
   geom="line"
   )
@@ -149,7 +161,8 @@ qplot(
   x=days_since_first_visit,
   y=weight, 
   data=data_visits
-)
+) + geom_hline(mapping=aes(yintercept=250), linetype="dashed")
+
 
 write.csv(
   data_visits,
