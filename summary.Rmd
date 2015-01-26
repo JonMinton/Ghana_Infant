@@ -1,6 +1,17 @@
-rm(list=ls())
+---
+title: "Exploration of data"
+author: "Jon_Minton"
+date: "Monday, January 26, 2015"
+output: word_document
+---
 
-#source("scripts/LoadPackages.R")
+# Introduction
+This document will show the results of some exploration of the data. 
+
+First, to load the R packages and datasets.
+
+
+```{r, cache=TRUE, echo=FALSE}
 
 require(ggplot2)
 require(lubridate)
@@ -15,19 +26,24 @@ require(car)
 #source("scripts/split_dataset.r")
 
 #####
+setwd("E:/repos/Ghana_Infant/")
+ data_main <- read.csv("data/csv/data_main.csv") %>% tbl_df()
+ data_visits <- read.csv("data/csv/data_visits.csv") %>% tbl_df()
+ data_birth_details <- read.csv("data/csv/data_birth_details.csv") %>% tbl_df()
+```
 
-data_main <- read.csv("data/csv/data_main.csv") %>% tbl_df()
-data_visits <- read.csv("data/csv/data_visits.csv") %>% tbl_df()
-data_birth_details <- read.csv("data/csv/data_birth_details.csv") %>% tbl_df()
 
+Now to look at data_main
 
-###
+```{r, echo=TRUE}
 
 # Start with data_main
 
 summary(data_main)
 
-# The following should be converted to factors
+# The summary above suggests that many of the variables are interpreted 
+# as numeric when instead they should be interpreted as factors (i.e. categorical)
+# To do this:
 
 tmp <- c(
   "health_centre",
@@ -66,9 +82,36 @@ for (i in 1:length(tmp)){
 }
 rm(tmp)
 
+# Now to summarise again
+
+summary(data_main)
 
 
 ###
+
+qplot(bmi, height, data=data_main)
+
+
+# Suggests just one possible error now, a height under 1.3
+```
+
+
+Creating an error data frame, containing record numbers and reasons why the record 
+numbers appear to have issues.
+
+```{r}
+
+error_df <- data.frame(
+  record_number=subset(data_main, height < 1.3)$record_number,
+  reason="outlier: low height"
+  )
+
+###
+```
+
+Exploring data and identifying further potential errors
+
+```{r, echo=TRUE}
 
 qplot(bmi, height, data=data_main)
 
@@ -233,5 +276,5 @@ data_visits_ok %>% filter(record_number %in% tmp) %>% ggplot() +
   geom_line(aes(x=visit_number, y=weight)) +
   facet_wrap( ~ record_number)
 
-
+```
 
