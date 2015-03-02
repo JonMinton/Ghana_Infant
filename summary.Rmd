@@ -16,10 +16,9 @@ First, to load the R packages and datasets.
 require(ggplot2)
 require(lubridate)
 require(stringr)
+require(tidyr)
 require(plyr)
 require(dplyr)
-require(tidyr)
-require(car)
 
 
 #source("scripts/load_data_first_time.r")
@@ -53,6 +52,7 @@ tmp <- c(
   "works",
   "occupation_main",
   "religion",
+  "education",
   "belief_cannot_control_health",
   "belief_things_do_affect_pregnancy",
   "behaviours_exercise",
@@ -74,7 +74,9 @@ tmp <- c(
   "family_planning",
   "family_planning_who_responsible",
   "family_planning_charges",
-  "family_planning_charges_expensive"
+  "family_planning_charges_expensive",
+  "marital_status",
+  "monthly_income"
   )
 
 for (i in 1:length(tmp)){
@@ -92,7 +94,64 @@ summary(data_main)
 qplot(bmi, height, data=data_main)
 
 
-# Suggests just one possible error now, a height under 1.3
+# Now to look at various cross-tabs
+
+# parity vs age 
+data_main %>%
+  filter(!is.na(parity)) %>%
+qplot(x=parity, y=age, data=., geom="jitter") 
+
+data_main %>%
+  filter(!is.na(parity)) %>%
+  select(parity, age) %>%
+  xtabs( ~ parity + age, data=.) %>%
+  as.data.frame %>%
+  ggplot() +geom_tile(aes(x=parity, y=age, fill=Freq))
+
+
+# Comparison of beliefs 
+data_main %>%
+  select(contains("belief")) %>%
+  xtabs(~ belief_cannot_control_health + belief_things_do_affect_pregnancy, data=.) 
+
+# test of independence 
+
+data_main %>%
+  select(contains("belief")) %>%
+  xtabs(~ belief_cannot_control_health + belief_things_do_affect_pregnancy, data=.) %>%
+  summary
+
+# visualisation
+
+data_main %>%
+  select(contains("belief")) %>%
+  xtabs(~ belief_cannot_control_health + belief_things_do_affect_pregnancy, data=.) %>%
+  as.data.frame %>%
+  ggplot +geom_tile(aes(x=belief_cannot_control_health, y=belief_things_do_affect_pregnancy, fill=Freq))
+
+
+# Now to look at behaviours
+
+
+tmp <- data_main %>%
+  select(contains("behaviour"))
+tmp$has_na <- apply(tmp, 1, function(x) any(is.na(x)))
+tmp <- tmp %>%
+  filter(!has_na) %>%
+  select(-has_na )
+tmp <- apply(tmp, 2, function(x) as.numeric(as.character(x)))
+
+
+fit <- princomp(
+  x=tmp, scores=T  
+  )
+
+fit$loadings
+
+tmp2 <- predict(fit, tmp)
+
+
+# Now to look at relationship
 ```
 
 
