@@ -148,7 +148,37 @@ fit <- princomp(
 
 fit$loadings
 
-tmp2 <- predict(fit, tmp)
+# Plot these 
+
+plot(NA, type="n", xlim=c(-1, 1), ylim=c(-1, 1), xlab="Factor 1", ylab="Factor 2")
+text(x=fit$loadings[,1], y=fit$loadings[,2], labels=rownames(fit$loadings), cex=0.65)
+abline(v=0, lty="dashed"); abline(h=0, lty="dashed")
+
+plot(NA, type="n", xlim=c(-1, 1), ylim=c(-1, 1), xlab="Factor 1", ylab="Factor 3")
+text(x=fit$loadings[,1], y=fit$loadings[,3], labels=rownames(fit$loadings), cex=0.65)
+abline(v=0, lty="dashed"); abline(h=0, lty="dashed")
+
+plot(NA, type="n", xlim=c(-1, 1), ylim=c(-1, 1), xlab="Factor 2", ylab="Factor 3")
+text(x=fit$loadings[,2], y=fit$loadings[,3], labels=rownames(fit$loadings), cex=0.65)
+abline(v=0, lty="dashed"); abline(h=0, lty="dashed")
+
+# Now to look at beliefs 
+
+tmp <- data_main %>%
+  select(contains("belief"), contains("behaviour"))
+tmp$has_na <- apply(tmp, 1, function(x) any(is.na(x)))
+tmp <- tmp %>%
+  filter(!has_na) %>%
+  select(-has_na )
+tmp <- apply(tmp, 2, function(x) as.numeric(as.character(x)))
+
+
+fit <- princomp(
+  x=tmp, scores=T  
+  )
+
+fit$loadings
+
 
 
 # Now to look at relationship
